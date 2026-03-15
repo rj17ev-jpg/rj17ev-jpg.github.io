@@ -1,0 +1,190 @@
+---
+
+import { getCollection } from 'astro:content'
+
+const posts = await getCollection('posts', ({ data }) => data.project && !data.draft)
+
+// Build activity map from last_updated dates
+const activityMap: Record<string, number> = {}
+for (const post of posts) {
+  if (!post.data.last_updated) continue
+  const d = post.data.last_updated
+  const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  activityMap[dateStr] = (activityMap[dateStr] ?? 0) + 1
+}
+
+const maxCount = Object.values(activityMap).length > 0
+  ? Math.max(...Object.values(activityMap))
+  : 1
+
+// Generate last 365 days
+const today = new Date()
+const days: { date: string; count: number; weekday: number }[] = []
+
+for (let i = 364; i >= 0; i--) {
+  const d = new Date(today)
+  d.setDate(today.getDate() - i)
+  const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  days.push({
+    date: dateStr,
+    count: activityMap[dateStr] ?? 0,
+    weekday: d.getDay(),
+  })
+}
+
+// Pad front so grid starts on Sunday
+const firstWeekday = days[0].weekday
+const paddedDays = [
+  ...Array(firstWeekday).fill(null),
+  ...days,
+]
+
+// Split into weeks (columns of 7)
+const weeks: (typeof days[0] | null)[][] = []
+for (let i = 0; i < paddedDays.length; i += 7) {
+  weeks.push(paddedDays.slice(i, i + 7))
+}
+
+function intensityClass(count: number): string {
+  if (count === 0) return 'level-0'
+  const ratio = count / maxCount
+  if (ratio < 0.25) return 'level-1'
+  if (ratio < 0.5)  return 'level-2'
+  if (ratio < 0.75) return 'level-3'
+  return 'level-4'
+}
+
+// Month labels: find first day of each month in the weeks grid
+const monthLabels: { label: string; col: number }[] = []
+let lastMonth = -1
+weeks.forEach((week, col) => {
+  const firstReal = week.find(d => d !== null)
+  if (!firstReal) return
+  const month = new Date(firstReal.date).getMonth()
+  if (month !== lastMonth) {
+    monthLabels.push({
+      label: new Date(firstReal.date).toLocaleString('default', { month: 'short' }),
+      col,
+    })
+    lastMonth = month
+  }
+})
+
+const totalActive = Object.keys(activityMap).length
+const currentStreak = (() => {
+  let streak = 0
+  const d = new Date(today)
+  while (true) {
+    const s = d.toISOString().split('T')[0]
+    if (activityMap[s]) {
+      streak++
+      d.setDate(d.getDate() - 1)
+    } else break
+  }
+  return streak
+})()
+---
+
+<div class="heatmap-wrapper">
+  <div class="heatmap-stats">
+    <span><strong>{totalActive}</strong> days logged</span>
+    <span><strong>{currentStreak}</strong> day streak</span>
+  </div>
+
+  <div class="heatmap-scroll">
+    <div class="heatmap-grid" style={`grid-template-columns: repeat(${weeks.length}, 1fr)`}>
+      <!-- Month labels row -->
+      {weeks.map((_, col) => {
+        const label = monthLabels.find(m => m.col === col)
+        return <div class="month-label">{label ? label.label : ''}</div>
+      })}
+
+      <!-- Day cells -->
+      {weeks.map(week =>
+        week.map(day =>
+          day === null
+            ? <div class="day-cell empty" />
+            : <div
+                class={`day-cell ${intensityClass(day.count)}`}
+                title={`${day.date}${day.count ? ` · ${day.count} project${day.count > 1 ? 's' : ''}` : ''}`}
+              />
+        )
+      )}
+    </div>
+  </div>
+
+  <div class="heatmap-legend">
+    <span>less</span>
+    <div class="level-0 legend-cell" />
+    <div class="level-1 legend-cell" />
+    <div class="level-2 legend-cell" />
+    <div class="level-3 legend-cell" />
+    <div class="level-4 legend-cell" />
+    <span>more</span>
+  </div>
+</div>
+
+<style>
+.heatmap-wrapper {
+  margin: 1rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.heatmap-stats {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-rows: 1rem repeat(7, 11px);
+  gap: 3px;
+  width: max-content;
+}
+
+.month-label {
+  font-size: 0.7rem;
+  opacity: 0.55;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
+.day-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+}
+
+.day-cell.empty {
+  background: transparent;
+}
+
+.level-0 { background: color-mix(in oklab, var(--color-foreground) 6%, transparent); }
+.level-1 { background: color-mix(in oklab, var(--color-accent) 25%, var(--color-background)); }
+.level-2 { background: color-mix(in oklab, var(--color-accent) 45%, var(--color-background)); }
+.level-3 { background: color-mix(in oklab, var(--color-accent) 70%, var(--color-background)); }
+.level-4 { background: var(--color-accent); }
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.7rem;
+  opacity: 0.55;
+}
+
+.legend-cell {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+}
+</style>

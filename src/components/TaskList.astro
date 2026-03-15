@@ -1,0 +1,98 @@
+---
+interface Task {
+  label: string
+  done: boolean
+}
+interface Props {
+  tasks: Task[]
+}
+const { tasks } = Astro.props
+const completed = tasks.filter(t => t.done).length
+const total = tasks.length
+const percent = Math.round((completed / total) * 100)
+---
+
+<div class="task-list">
+  <div class="task-progress-header">
+    <span class="task-fraction">{completed}/{total} done</span>
+    <span class="task-percent">{percent}%</span>
+  </div>
+  <div class="task-progress-bar">
+    <div class="task-progress-fill" style={`width: ${percent}%`} />
+  </div>
+  <ul class="task-items">
+    {tasks.map(task => (
+      <li class={`task-item ${task.done ? 'done' : ''}`}>
+        <span class="task-check">{task.done ? '✓' : '○'}</span>
+        <span class="task-label">{task.label}</span>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+.task-list {
+  border: 1.5px solid color-mix(in oklab, var(--color-foreground) 10%, transparent);
+  border-radius: 0.75rem;
+  padding: 1.00rem;
+  margin: 1.00rem 0;
+}
+
+.task-progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+
+.task-progress-bar {
+  height: 6px;
+  background: color-mix(in oklab, var(--color-foreground) 10%, transparent);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.task-progress-fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.task-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  padding: 0;
+  margin: 0;
+}
+
+.task-check {
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  width: 1rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.task-label {
+  opacity: 1;
+}
+
+.task-item.done .task-label {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+</style>

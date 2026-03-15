@@ -9,6 +9,8 @@ import HomeBanner from '~/components/HomeBanner.astro'
 import siteConfig from '~/site.config'
 import TagsSection from '~/components/TagsSection.astro'
 import SeriesSection from '~/components/SeriesSection.astro'
+import PostCard from '~/components/PostCard.astro'
+import ActivityHeatmap from '~/components/ActivityHeatmap.astro'
 
 const home = await getCollection('home')
 let HomeContent
@@ -38,6 +40,12 @@ const postsHaveSeries = sortedPosts.some((post) => post.data.series)
     )
   }
   {
+    <section>
+      <BlockHeader>Activity</BlockHeader>
+      <ActivityHeatmap />  
+    </section>
+  }
+  {
     postsHaveSeries && (
       <section>
         <BlockHeader>Series</BlockHeader>
@@ -57,17 +65,28 @@ const postsHaveSeries = sortedPosts.some((post) => post.data.series)
     sortedPosts.length > 0 && (
       <section>
         <BlockHeader>Latest Posts</BlockHeader>
-        {sortedPosts
-          .reverse()
-          .slice(0, Math.floor(siteConfig.pageSize / 2))
-          .map((post) => (
-            <PostPreview post={post} />
-          ))}
+        <div class="posts-grid">
+          {sortedPosts
+            .reverse()
+            .slice(0, 8)
+            .map((post) => (
+              <PostCard post={post} />
+            ))}
+        </div>
         <Pagination nextLink="/posts" nextText="Archive" />
       </section>
     )
-  }
+}
 </Layout>
+
+<style>
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+</style>
 
 <style is:global>
   a.heading-anchor {

@@ -5,6 +5,7 @@ const postsCollection = defineCollection({
   loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: './src/content/posts' }),
   schema: ({ image }) =>
     z.object({
+      slug: z.string().optional(), // will default to the filename if not provided
       title: z.string(),
       published: z.coerce.date(),
       // updated: z.coerce.date().optional(),
@@ -20,6 +21,11 @@ const postsCollection = defineCollection({
         })
         .optional(),
       toc: z.boolean().optional().default(true),
+      project: z.boolean().default(false),           // is this a project post?
+      status: z.enum(['active', 'paused', 'done', 'idea']).optional(),
+      featured: z.boolean().default(false),          // max ONE post should have this
+      next_step: z.string().optional(),              // "write the intro section"
+      last_updated: z.date().optional(),             // manually bump this when you work on it
     }),
 })
 

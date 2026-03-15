@@ -1,0 +1,58 @@
+---
+title: 'Learning BPM data analysis and bootstrap sampling'
+published: 2026-03-15
+last_updated: 2026-03-15
+draft: false
+description: 'PROG-202 assignment for Week 2'
+tags: ['research', 'statistics','power spectra','data visualization','t tests','bootstrap sampling']
+slug: prog-202-week-2
+project: true
+status: active
+featured: false
+next_step: 'remove noisy data'
+---
+
+import TaskList from '~/components/TaskList.astro'
+
+## What this is
+
+This assignment is for PROG-202, Human Experimental Workshop. This semester we're focusing on analyzing cardiac data and relating it with neuroscience. 
+
+The participants performed two tasks. The first was a 'count' task with two conditions: [slow, fast] in which individual letters appeared on the screen and participants recorded their heartbeats while watching the screen. 
+
+In the second task, participants viewed two videos [rest, move] and recorded their heartbeats.
+
+These are the main goals of this assignment:
+* Exclude noisy data
+* Apply a Gaussian filter to the data 
+* Compute power spectra for each condition
+* Create visualization of the data
+* Perform a one-sided, paired t-test to compare the means of the BPMs between the two conditions of each experiment
+* Perform a nonparametric bootstrap test to compare the mean BPMs in two condition in each experiment.
+
+## Tasks
+
+<TaskList tasks={[
+  { label: "understand the solutions file from the first week", done: false },
+  { label: "understand the 'numerical experiments' file", done: false },
+  { label: "remove participant(s) that don't seem to have a regular heartbeat", done: false },
+  { label: "calculate the BPM for each participant in each condition for the two experiments", done: false },
+  { label: "apply a gaussian filter to smooth power spectra (using the scipy.ndimage.gaussian_filter function)", done: false },
+  { label: "find the maximum of the power spectrum", done: false },
+  { label: "create a visualization of the data and plot the means", done: false },
+  { label: "do a one-sided paired t-test", done: false },
+  { label: "read about the bootstrap method", done: false },
+  { label: "take the set of your participants and randomly sample participants, with replacement, from this set until you get a set of the same size", done: false },
+  { label: "use the BPMs that you've already calculated for the original participants to calculate new mean BPMs in the two conditions", done: false },
+  { label: "calculate the difference of the BPMs", done: false },
+  { label: "perform \*a lot\* of bootstrap resamples", done: false },
+  { label: "plot the distribution of the differences that you obtain using a histogram", done: false },
+  { label: "calculate the probability of the null hypothesis", done: false },
+
+
+]} />
+
+## Log
+
+**2026-03-15** — Looked at the actual assignment and understood all the different parts.
+**2026-03-15** - Now that I've looked at the actual individual steps, it doesn't seem so difficult ! 
