@@ -4,6 +4,7 @@ published: 2026-03-15
 draft: false
 description: 'Welcome to my blog !'
 tags: ['introduction']
+slug: intro
 ---
 
 I am so happy to be finally doing this. 
