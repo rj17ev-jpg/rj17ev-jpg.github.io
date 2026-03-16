@@ -1,7 +1,7 @@
 ---
 title: 'Learning BPM data analysis and bootstrap sampling'
 published: 2026-03-15
-last_updated: 2026-03-15
+last_updated: 2026-03-16
 draft: false
 description: 'PROG-202 assignment for Week 2'
 tags: ['research', 'statistics','power spectra','data visualization','t tests','bootstrap sampling']
@@ -33,10 +33,10 @@ These are the main goals of this assignment:
 ## Tasks
 
 <TaskList tasks={[
-  { label: "understand the solutions file from the first week", done: false },
-  { label: "understand the 'numerical experiments' file", done: false },
+  { label: "understand the solutions file from the first week", done: true },
+  { label: "understand the 'numerical experiments' file", done: true },
   { label: "remove participant(s) that don't seem to have a regular heartbeat", done: false },
-  { label: "calculate the BPM for each participant in each condition for the two experiments", done: false },
+  { label: "calculate the BPM for each participant in each condition for the two experiments", done: true },
   { label: "apply a gaussian filter to smooth power spectra (using the scipy.ndimage.gaussian_filter function)", done: false },
   { label: "find the maximum of the power spectrum", done: false },
   { label: "create a visualization of the data and plot the means", done: false },
@@ -56,3 +56,10 @@ These are the main goals of this assignment:
 
 **2026-03-15** — Looked at the actual assignment and understood all the different parts.
 **2026-03-15** - Now that I've looked at the actual individual steps, it doesn't seem so difficult ! 
+
+**2026-03-16 13:56** - Looking at the 'numerical experiments' file. Trying to understand power spectra and temporal frequency analysis.
+
+**2026-03-16 15:01** - understood generating sine waves in python using np, what time frequency analysis does, different types of waves, adding noise, filtering and especially Gaussian filtering - now looking at assignment tasks from last week
+  - Realizing I should've used np and pandas to do some of the parts - they are so much more efficient and cleaner than usual python functions ! 
+
+**2026-03-16 15:52** - resampled the data, created subplots of the time series, created subplots of power spectra, calculated mean bpms at from frequency at highest power - but not filtered participants yet - not sure how to do that - going to do Gaussian filtering next and plot that.

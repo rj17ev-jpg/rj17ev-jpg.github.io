@@ -1,10 +1,8 @@
 ---
-
 import { getCollection } from 'astro:content'
 
 const posts = await getCollection('posts', ({ data }) => data.project && !data.draft)
 
-// Build activity map from last_updated dates
 const activityMap: Record<string, number> = {}
 for (const post of posts) {
   if (!post.data.last_updated) continue
@@ -17,33 +15,54 @@ const maxCount = Object.values(activityMap).length > 0
   ? Math.max(...Object.values(activityMap))
   : 1
 
-// Generate last 365 days
-const today = new Date()
-const days: { date: string; count: number; weekday: number }[] = []
-
-for (let i = 364; i >= 0; i--) {
-  const d = new Date(today)
-  d.setDate(today.getDate() - i)
-  const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-  days.push({
-    date: dateStr,
-    count: activityMap[dateStr] ?? 0,
-    weekday: d.getDay(),
-  })
+function toLocaleDateStr(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-// Pad front so grid starts on Sunday
+// Generate last 365 days
+const today = new Date()
+// const days: { date: string; count: number; weekday: number }[] = []
+// Generate from Jan 1 of this year to today
+const startOfYear = new Date(today.getFullYear(), 0, 1)
+const days: { date: string; count: number; weekday: number }[] = []
+let cursor = new Date(startOfYear)
+while (cursor <= today) {
+  days.push({
+    date: toLocaleDateStr(cursor),
+    count: activityMap[toLocaleDateStr(cursor)] ?? 0,
+    weekday: cursor.getDay(),
+  })
+  cursor.setDate(cursor.getDate() + 1)
+}
+// Pad front so first week starts on Sunday
 const firstWeekday = days[0].weekday
-const paddedDays = [
+const paddedDays: ({ date: string; count: number; weekday: number } | null)[] = [
   ...Array(firstWeekday).fill(null),
   ...days,
 ]
 
-// Split into weeks (columns of 7)
-const weeks: (typeof days[0] | null)[][] = []
+// Build weeks as columns
+const weeks: ({ date: string; count: number } | null)[][] = []
 for (let i = 0; i < paddedDays.length; i += 7) {
   weeks.push(paddedDays.slice(i, i + 7))
 }
+
+// Month label per column: label appears on first week of a new month
+const monthLabels: (string | null)[] = weeks.map(week => {
+  const firstReal = week.find(d => d !== null)
+  if (!firstReal) return null
+  const d = new Date(firstReal.date)
+  // Only label if this is the first week where this month appears
+  const prevWeekIdx = weeks.indexOf(week) - 1
+  if (prevWeekIdx < 0) return d.toLocaleString('default', { month: 'short' })
+  const prevReal = weeks[prevWeekIdx].find(d => d !== null)
+  if (!prevReal) return d.toLocaleString('default', { month: 'short' })
+  const prevMonth = new Date(prevReal.date).getMonth()
+  if (new Date(firstReal.date).getMonth() !== prevMonth) {
+    return d.toLocaleString('default', { month: 'short' })
+  }
+  return null
+})
 
 function intensityClass(count: number): string {
   if (count === 0) return 'level-0'
@@ -54,28 +73,12 @@ function intensityClass(count: number): string {
   return 'level-4'
 }
 
-// Month labels: find first day of each month in the weeks grid
-const monthLabels: { label: string; col: number }[] = []
-let lastMonth = -1
-weeks.forEach((week, col) => {
-  const firstReal = week.find(d => d !== null)
-  if (!firstReal) return
-  const month = new Date(firstReal.date).getMonth()
-  if (month !== lastMonth) {
-    monthLabels.push({
-      label: new Date(firstReal.date).toLocaleString('default', { month: 'short' }),
-      col,
-    })
-    lastMonth = month
-  }
-})
-
 const totalActive = Object.keys(activityMap).length
 const currentStreak = (() => {
   let streak = 0
   const d = new Date(today)
   while (true) {
-    const s = d.toISOString().split('T')[0]
+    const s = toLocaleDateStr(d)
     if (activityMap[s]) {
       streak++
       d.setDate(d.getDate() - 1)
@@ -92,24 +95,20 @@ const currentStreak = (() => {
   </div>
 
   <div class="heatmap-scroll">
-    <div class="heatmap-grid" style={`grid-template-columns: repeat(${weeks.length}, 1fr)`}>
-      <!-- Month labels row -->
-      {weeks.map((_, col) => {
-        const label = monthLabels.find(m => m.col === col)
-        return <div class="month-label">{label ? label.label : ''}</div>
-      })}
-
-      <!-- Day cells -->
-      {weeks.map(week =>
-        week.map(day =>
-          day === null
-            ? <div class="day-cell empty" />
-            : <div
-                class={`day-cell ${intensityClass(day.count)}`}
-                title={`${day.date}${day.count ? ` · ${day.count} project${day.count > 1 ? 's' : ''}` : ''}`}
-              />
-        )
-      )}
+    <div class="heatmap-grid">
+      {weeks.map((week, col) => (
+        <div class="heatmap-col">
+          <div class="month-label">{monthLabels[col] ?? ''}</div>
+          {week.map(day =>
+            day === null
+              ? <div class="day-cell empty" />
+              : <div
+                  class={`day-cell ${intensityClass(day.count)}`}
+                  title={`${day.date}${day.count ? ` · ${day.count} project${day.count > 1 ? 's' : ''}` : ''}`}
+                />
+          )}
+        </div>
+      ))}
     </div>
   </div>
 
@@ -145,16 +144,23 @@ const currentStreak = (() => {
 }
 
 .heatmap-grid {
-  display: grid;
-  grid-template-rows: 1rem repeat(7, 11px);
+  display: flex;
+  flex-direction: row;
   gap: 3px;
   width: max-content;
+}
+
+.heatmap-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .month-label {
   font-size: 0.7rem;
   opacity: 0.55;
   line-height: 1rem;
+  height: 1rem;
   white-space: nowrap;
 }
 
@@ -162,6 +168,7 @@ const currentStreak = (() => {
   width: 11px;
   height: 11px;
   border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .day-cell.empty {

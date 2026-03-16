@@ -16,6 +16,7 @@ import ScrollUpButton from '~/components/ScrollUpButton.astro'
 import type { Collation } from '~/types'
 import ChevronsRight from '~/icons/chevrons-right.svg'
 import { getPostSequenceContext } from '~/utils'
+import PostCard from '~/components/PostCard.astro'
 
 export const getStaticPaths = (async () => {
   const posts = await getSortedPosts()
@@ -129,18 +130,31 @@ if (postData.tags && postData.tags.length > 0) {
     showSeries && series ? (
       <section>
         <DividerText text={`${series.title} Series`} />
-        {series.entries.map((seriesPost) => (
-          <PostPreview post={seriesPost} />
-        ))}
+        <div class="posts-grid">
+          {series.entries.map((seriesPost) => (
+            <PostCard post={seriesPost} />
+          ))}
+        </div>
       </section>
     ) : prev || next ? (
       <section>
         <DividerText text="More Posts" />
-        {prev && <PostPreview post={prev} />}
-        {next && <PostPreview post={next} />}
+        <div class="posts-grid">
+          {prev && <PostCard post={prev} />}
+          {next && <PostCard post={next} />}
+        </div>
       </section>
     ) : null
   }
+
+  <style>
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  </style>
   {
     siteConfig.giscus && (
       <section>

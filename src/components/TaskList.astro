@@ -1,15 +1,20 @@
 ---
+import { marked } from 'marked'
 interface Task {
   label: string
   done: boolean
 }
 interface Props {
   tasks: Task[]
+  id:string
 }
-const { tasks } = Astro.props
+const { tasks,id } = Astro.props
 const completed = tasks.filter(t => t.done).length
 const total = tasks.length
 const percent = Math.round((completed / total) * 100)
+
+// Parse each label as inline markdown
+const parsedLabels = tasks.map(t => marked.parseInline(t.label) as string)
 ---
 
 <div class="task-list">
@@ -21,10 +26,10 @@ const percent = Math.round((completed / total) * 100)
     <div class="task-progress-fill" style={`width: ${percent}%`} />
   </div>
   <ul class="task-items">
-    {tasks.map(task => (
+    {tasks.map((task,i) => (
       <li class={`task-item ${task.done ? 'done' : ''}`}>
         <span class="task-check">{task.done ? '✓' : '○'}</span>
-        <span class="task-label">{task.label}</span>
+        <span class="task-label" set:html={parsedLabels[i]} />
       </li>
     ))}
   </ul>
