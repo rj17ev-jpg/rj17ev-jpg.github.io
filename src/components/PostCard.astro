@@ -5,17 +5,20 @@ interface Props {
   post: CollectionEntry<'posts'>
 }
 
-const { post } = Astro.props
-const { title, description, published, tags, cover, slug } = post.data
-const url = `/posts/${slug ?? post.slug}`
+const { post, id } = Astro.props
+const url = `/posts/${id ?? post.id}`
+
+const { title, description, published, tags, coverImage, coverUrl } = post.data
+const imgSrc = coverUrl ?? (coverImage ? coverImage.src.src : null)
+const imgAlt = coverImage?.alt ?? title
 ---
 
 <a href={url} class="post-card">
   <div class="post-card-image">
-    {cover
-      ? <img src={cover} alt={title} />
-      : <div class="post-card-placeholder" />
-    }
+  {imgSrc
+    ? <img src={imgSrc} alt={imgAlt} />
+    : <div class="post-card-placeholder" />
+  }
   </div>
   <div class="post-card-body">
     <h3>{title}</h3>

@@ -1,0 +1,93 @@
+---
+import { getCollection, render } from 'astro:content'
+import Layout from '~/layouts/Layout.astro'
+import BlockHeader from '~/components/BlockHeader.astro'
+
+const areas = await getCollection('areas')
+const active = areas.filter(a => a.data.active)
+  .sort((a, b) => (b.data.last_updated?.getTime() ?? 0) - (a.data.last_updated?.getTime() ?? 0))
+const dormant = areas.filter(a => !a.data.active)
+---
+
+<Layout>
+  <BlockHeader>Areas of Interest</BlockHeader>
+  <p style="opacity:0.7; margin-bottom:2rem;">
+    Persistent obsessions. Each one goes quiet and comes back. Outputs live here.
+  </p>
+
+  <div class="areas-grid">
+    {active.map(area => (
+      <a href={`/areas/${area.id}`} class="area-card">
+        {area.data.icon && <span class="area-icon">{area.data.icon}</span>}
+        <div>
+          <strong>{area.data.title}</strong>
+          {area.data.description && <p>{area.data.description}</p>}
+          {area.data.outputs.length > 0 && (
+            <span class="area-output-count">{area.data.outputs.length} output{area.data.outputs.length > 1 ? 's' : ''}</span>
+          )}
+        </div>
+      </a>
+    ))}
+  </div>
+
+  {dormant.length > 0 && (
+    <>
+      <h3 style="margin-top:2rem; opacity:0.5;">Dormant</h3>
+      <div class="areas-grid dormant">
+        {dormant.map(area => (
+          <a href={`/areas/${area.id}`} class="area-card">
+            {area.data.icon && <span class="area-icon">{area.data.icon}</span>}
+            <strong>{area.data.title}</strong>
+          </a>
+        ))}
+      </div>
+    </>
+  )}
+</Layout>
+
+<style>
+.areas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.area-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid color-mix(in oklab, var(--color-foreground) 10%, transparent);
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s;
+}
+
+.area-card:hover {
+  border-color: var(--color-accent);
+}
+
+.area-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.area-card p {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.65;
+  line-height: 1.4;
+}
+
+.area-output-count {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-accent);
+}
+
+.dormant .area-card {
+  opacity: 0.45;
+}
+</style>

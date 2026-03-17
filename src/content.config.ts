@@ -20,6 +20,7 @@ const postsCollection = defineCollection({
           alt: z.string(),
         })
         .optional(),
+      coverUrl: z.string().optional(),  // simple image URL
       toc: z.boolean().optional().default(true),
       project: z.boolean().default(false),           // is this a project post?
       status: z.enum(['active', 'paused', 'done', 'idea']).optional(),
@@ -27,6 +28,23 @@ const postsCollection = defineCollection({
       next_step: z.string().optional(),              // "write the intro section"
       last_updated: z.date().optional(),             // manually bump this when you work on it
     }),
+})
+
+const areasCollection = defineCollection({
+  loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: './src/content/areas' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    icon: z.string().optional(),
+    coverUrl: z.string().optional(),  // simple image URL
+    active: z.boolean().default(true),
+    last_updated: z.coerce.date().optional(),
+    outputs: z.array(z.object({
+      label: z.string(),
+      url: z.string(),
+      date: z.coerce.date().optional(),
+    })).default([]),
+  }),
 })
 
 const homeCollection = defineCollection({
@@ -60,4 +78,5 @@ export const collections = {
   posts: postsCollection,
   home: homeCollection,
   addendum: addendumCollection,
+  areas: areasCollection,
 }
