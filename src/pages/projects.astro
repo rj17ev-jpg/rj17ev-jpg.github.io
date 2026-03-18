@@ -1,34 +1,29 @@
 ---
 // src/pages/projects.astro
 import { getCollection } from 'astro:content';
-import BaseLayout from '../layouts/Layout.astro'; // adjust import to match your theme
+import Layout from '../layouts/Layout.astro';
+import BlockHeader from '../components/BlockHeader.astro';
 
 const allPosts = await getCollection('posts', ({ data }) => !data.draft && data.project);
-
-const statusOrder = ['active', 'paused', 'idea', 'done'];
-
-const grouped = statusOrder.reduce((acc, status) => {
-  acc[status] = allPosts.filter(p => p.data.status === status);
-  return acc;
-}, {} as Record<string, typeof allPosts>);
-
-const statusLabels: Record<string, string> = {
-  active:  '🟢 Active',
-  paused:  '⏸️  Paused',
-  idea:    '💡 Ideas',
-  done:    '✅ Done',
-};
+console.log(allPosts.map(p => ({ title: p.data.title, status: p.data.status, project: p.data.project })))
 
 const featured = allPosts.find(p => p.data.featured);
----
 
-<BaseLayout title="Projects">
-  <!-- FEATURED: the one thing you're working on right now -->
+const grouped = {
+  ongoing: allPosts.filter(p => p.data.status === 'ongoing'),
+  active:  allPosts.filter(p => p.data.status === 'active'),
+  paused:  allPosts.filter(p => p.data.status === 'paused'),
+  idea:    allPosts.filter(p => p.data.status === 'idea'),
+  done:    allPosts.filter(p => p.data.status === 'done'),
+}
+---
+<Layout title="Projects">
+
   {featured && (
-    <section style="margin-bottom: 2rem; padding: 1rem; border: 2px solid var(--color-accent);">
+    <section style="margin-bottom: 2rem; padding: 1rem; border: 2px solid var(--color-accent); border-radius: 0.75rem;">
       <p style="margin:0 0 0.5rem; opacity:0.7; font-size:0.85rem;">NOW WORKING ON</p>
       <h2 style="margin:0 0 0.5rem;">
-        <a href={`/posts/${featured.data.slug ?? featured.slug}`}>{featured.data.title}</a>
+        <a href={`/posts/${featured.data.slug ?? featured.id}`}>{featured.data.title}</a>
       </h2>
       {featured.data.next_step && (
         <p style="margin:0; font-size:0.9rem;">
@@ -38,32 +33,110 @@ const featured = allPosts.find(p => p.data.featured);
     </section>
   )}
 
-  <!-- ALL PROJECTS grouped by status -->
-  {statusOrder.map(status => grouped[status].length > 0 && (
+  {grouped.ongoing.length > 0 && (
     <section style="margin-bottom: 2rem;">
-      <h3>{statusLabels[status]}</h3>
-      <ul style="list-style:none; padding:0;">
-        {grouped[status].map(post => (
-          <li style="margin-bottom: 1rem; padding: 0.75rem; border: 1px solid var(--color-border);">
-            <a href={`/posts/${post.data.slug ?? post.slug}`}>
+      <h3>📅 Ongoing</h3>
+      <p style="font-size:0.85rem; opacity:0.6; margin-top:-0.5rem;">Long-term commitments — measured over months, not tasks.</p>
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.75rem;">
+        {grouped.ongoing.map(post => (
+          <li style="padding: 0.75rem; border: 1px solid color-mix(in oklab, var(--color-foreground) 10%, transparent); border-radius: 0.75rem;">
+            <a href={`/posts/${post.data.slug ?? post.id}`}>
               <strong>{post.data.title}</strong>
             </a>
             {post.data.last_updated && (
-              <span style="margin-left:1rem; font-size:0.8rem; opacity:0.6;">
+              <span style="margin-left:1rem; font-size:0.8rem; opacity:0.5;">
                 last updated: {post.data.last_updated.toLocaleDateString()}
               </span>
             )}
             {post.data.next_step && (
-              <div style="font-size:0.85rem; margin-top:0.25rem; opacity:0.8;">
-                → {post.data.next_step}
-              </div>
+              <div style="font-size:0.85rem; margin-top:0.35rem; opacity:0.8;">→ {post.data.next_step}</div>
             )}
             {post.data.description && (
-              <div style="font-size:0.85rem; margin-top:0.25rem;">{post.data.description}</div>
+              <div style="font-size:0.85rem; margin-top:0.25rem; opacity:0.6;">{post.data.description}</div>
             )}
           </li>
         ))}
       </ul>
     </section>
-  ))}
-</BaseLayout>
+  )}
+
+  {grouped.active.length > 0 && (
+    <section style="margin-bottom: 2rem;">
+      <h3>🟢 Active</h3>
+      <p style="font-size:0.85rem; opacity:0.6; margin-top:-0.5rem;">Short-term projects currently in progress.</p>
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.75rem;">
+        {grouped.active.map(post => (
+          <li style="padding: 0.75rem; border: 1px solid color-mix(in oklab, var(--color-foreground) 10%, transparent); border-radius: 0.75rem;">
+            <a href={`/posts/${post.data.slug ?? post.id}`}>
+              <strong>{post.data.title}</strong>
+            </a>
+            {post.data.last_updated && (
+              <span style="margin-left:1rem; font-size:0.8rem; opacity:0.5;">
+                last updated: {post.data.last_updated.toLocaleDateString()}
+              </span>
+            )}
+            {post.data.next_step && (
+              <div style="font-size:0.85rem; margin-top:0.35rem; opacity:0.8;">→ {post.data.next_step}</div>
+            )}
+            {post.data.description && (
+              <div style="font-size:0.85rem; margin-top:0.25rem; opacity:0.6;">{post.data.description}</div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {grouped.paused.length > 0 && (
+    <section style="margin-bottom: 2rem;">
+      <h3 style="opacity:0.6;">⏸️ Paused</h3>
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.75rem;">
+        {grouped.paused.map(post => (
+          <li style="padding: 0.75rem; border: 1px solid color-mix(in oklab, var(--color-foreground) 8%, transparent); border-radius: 0.75rem; opacity: 0.65;">
+            <a href={`/posts/${post.data.slug ?? post.id}`}>
+              <strong>{post.data.title}</strong>
+            </a>
+            {post.data.next_step && (
+              <div style="font-size:0.85rem; margin-top:0.35rem;">→ {post.data.next_step}</div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {grouped.idea.length > 0 && (
+    <section style="margin-bottom: 2rem;">
+      <h3 style="opacity:0.6;">💡 Ideas</h3>
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.5rem;">
+        {grouped.idea.map(post => (
+          <li style="padding: 0.5rem 0.75rem; border: 1px solid color-mix(in oklab, var(--color-foreground) 8%, transparent); border-radius: 0.75rem; opacity: 0.55; font-size:0.9rem;">
+            <a href={`/posts/${post.data.slug ?? post.id}`}>{post.data.title}</a>
+            {post.data.description && (
+              <span style="margin-left:0.5rem; opacity:0.7;">— {post.data.description}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {grouped.done.length > 0 && (
+    <section style="margin-bottom: 2rem;">
+      <h3 style="opacity:0.6;">✅ Done</h3>
+      <ul style="list-style:none; padding:0; display:flex; flex-direction:column; gap:0.5rem;">
+        {grouped.done.map(post => (
+          <li style="padding: 0.5rem 0.75rem; opacity: 0.5; font-size:0.9rem;">
+            <a href={`/posts/${post.data.slug ?? post.id}`}>{post.data.title}</a>
+            {post.data.published && (
+              <span style="margin-left:0.5rem; font-size:0.8rem;">
+                {post.data.published.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+</Layout>

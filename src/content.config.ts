@@ -23,10 +23,11 @@ const postsCollection = defineCollection({
       coverUrl: z.string().optional(),  // simple image URL
       toc: z.boolean().optional().default(true),
       project: z.boolean().default(false),           // is this a project post?
-      status: z.enum(['active', 'paused', 'done', 'idea']).optional(),
+      status: z.enum(['active', 'paused', 'done', 'idea','ongoing']).optional(),
       featured: z.boolean().default(false),          // max ONE post should have this
       next_step: z.string().optional(),              // "write the intro section"
       last_updated: z.date().optional(),             // manually bump this when you work on it
+      work_log: z.array(z.coerce.date()).default([]),
     }),
 })
 

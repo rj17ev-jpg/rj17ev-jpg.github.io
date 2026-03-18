@@ -1,6 +1,10 @@
 ---
 title: 'Learning BPM data analysis and bootstrap sampling'
 published: 2026-03-15
+work_log:
+  - 2026-03-15
+  - 2026-03-16
+  - 2026-03-17
 last_updated: 2026-03-16
 draft: false
 description: 'PROG-202 assignment for Week 2'
@@ -8,9 +12,9 @@ tags: ['research', 'statistics','power spectra','data visualization','t tests','
 slug: prog-202-week-2
 coverUrl: https://i.pinimg.com/1200x/a8/0a/2c/a80a2cda38843ef2f5d9713becb98199.jpg
 project: true
-status: active
+status: done
 featured: false
-next_step: 'remove noisy data'
+next_step: 'completed!'
 ---
 
 import TaskList from '~/components/TaskList.astro'
@@ -36,19 +40,19 @@ These are the main goals of this assignment:
 <TaskList tasks={[
   { label: "understand the solutions file from the first week", done: true },
   { label: "understand the 'numerical experiments' file", done: true },
-  { label: "remove participant(s) that don't seem to have a regular heartbeat", done: false },
+  { label: "remove participant(s) that don't seem to have a regular heartbeat", done: true },
   { label: "calculate the BPM for each participant in each condition for the two experiments", done: true },
-  { label: "apply a gaussian filter to smooth power spectra (using the scipy.ndimage.gaussian_filter function)", done: false },
-  { label: "find the maximum of the power spectrum", done: false },
-  { label: "create a visualization of the data and plot the means", done: false },
-  { label: "do a one-sided paired t-test", done: false },
-  { label: "read about the bootstrap method", done: false },
-  { label: "take the set of your participants and randomly sample participants, with replacement, from this set until you get a set of the same size", done: false },
-  { label: "use the BPMs that you've already calculated for the original participants to calculate new mean BPMs in the two conditions", done: false },
-  { label: "calculate the difference of the BPMs", done: false },
-  { label: "perform \*a lot\* of bootstrap resamples", done: false },
-  { label: "plot the distribution of the differences that you obtain using a histogram", done: false },
-  { label: "calculate the probability of the null hypothesis", done: false },
+  { label: "apply a gaussian filter to smooth power spectra (using the scipy.ndimage.gaussian_filter function)", done: true },
+  { label: "find the maximum of the power spectrum", done: true },
+  { label: "create a visualization of the data and plot the means", done: true },
+  { label: "do a one-sided paired t-test", done: true },
+  { label: "read about the bootstrap method", done: true },
+  { label: "take the set of your participants and randomly sample participants, with replacement, from this set until you get a set of the same size", done: true },
+  { label: "use the BPMs that you've already calculated for the original participants to calculate new mean BPMs in the two conditions", done: true },
+  { label: "calculate the difference of the BPMs", done: true },
+  { label: "perform \*a lot\* of bootstrap resamples", done: true },
+  { label: "plot the distribution of the differences that you obtain using a histogram", done: true },
+  { label: "calculate the probability of the null hypothesis", done: true },
 
 
 ]} />
@@ -64,3 +68,5 @@ These are the main goals of this assignment:
   - Realizing I should've used np and pandas to do some of the parts - they are so much more efficient and cleaner than usual python functions ! 
 
 **2026-03-16 15:52** - resampled the data, created subplots of the time series, created subplots of power spectra, calculated mean bpms at from frequency at highest power - but not filtered participants yet - not sure how to do that - going to do Gaussian filtering next and plot that.
+
+**2026-03-17** - completed the assignment ! it was fun and easy and quite insightful. I like Gaussian filters and bootstrap sampling !

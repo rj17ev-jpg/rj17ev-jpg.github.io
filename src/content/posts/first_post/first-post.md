@@ -5,6 +5,7 @@ draft: false
 description: 'Welcome to my blog !'
 tags: ['introduction']
 slug: intro
+coverUrl: https://i.pinimg.com/1200x/94/64/8a/94648a4b975bf9d73d30a58080ab5d51.jpg
 ---
 
 I am so happy to be finally doing this. 
