@@ -1,0 +1,39 @@
+---
+title: 'Designing experiments in pygame'
+published: 2026-03-22
+last_updated: 2026-03-22
+work_log:
+  - 2026-03-22
+  - 2026-03-23
+draft: false
+description: 'Creating/analyzing visual perception experiments'
+tags: [research,stimuli,data analysis]
+slug: prog-202-week-3
+coverUrl: https://i.pinimg.com/736x/ba/84/5c/ba845cb5f1d9bcf7786b2a4d33768630.jpg
+project: true
+status: done
+featured: false
+next_step: 'Analyze means'
+---
+
+import TaskList from '~/components/TaskList.astro'
+
+## What this is
+
+Part of this is familiarizing oneself with the `pygame` library. Secondly: we're going to run the experiments with ourselves as subjects. Then we're going to analyze the data. 
+
+## Tasks
+
+<TaskList tasks={[
+  { label: "Complete the letters assignment",done:true },
+  {label:"Go through the trainings and the main experiment",done:true},
+  {label:"Upload the collected data",done:true},
+  {label:"Read the data into a python notebook",done:true},
+  { label: "What is your mean percentage of correct trials in each of the three sessions? ", done: true },
+  { label: "In the main session, what is the percentage correct for each of the target contrast levels ?", done: true },
+  { label: "Estimate visually, or mathematically if you know how, your threshold: the value of TARGET_GRAY at which your percent correct would be 75%.",done:true},
+  { label:"Make a graph of percentage correct as a function or target gray level separately for the two mask positions",done: true}]} />
+
+## Log
+
+**2026-03-23** — Created the first part - 'dancing' letters (using `random` module) and `window.blit`. Completed the experiments. The only thing left is to analyze the data !
