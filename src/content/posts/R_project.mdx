@@ -2,6 +2,8 @@
 title: 'Learning mixed-effects models in R'
 published: 2026-03-15
 last_updated: 2026-03-16
+work_log:
+  - 2026-03-24
 draft: false
 description: 'Working through the analysis pipeline for my reading study'
 tags: ['research', 'statistics']
@@ -10,7 +12,7 @@ coverUrl: https://i.pinimg.com/1200x/e7/15/cf/e715cfeb26ee57cbd222f49d57612d74.j
 project: true
 status: active
 featured: false
-next_step: 'understand how emmeans works.'
+next_step: 'Read about mixed-effects models.'
 ---
 
 ## What this is
@@ -26,11 +28,17 @@ import TaskList from '~/components/TaskList.astro'
 <TaskList tasks={[
   { label: "Set up the R script", done: true },
   { label: "Understand random intercepts", done: true },
-  { label: "Replicate emmeans contrasts", done: false },
-  { label: "Translate pipeline to Python", done: false },
-  { label: "Write up findings", done: false },
+  { label: "Convert writing analysis script into qmd notebook", done: true },
+  { label: "Convert 'VisualTask' script into qmd notebook", done: true },
+  { label:"Read Baayen et al 2008",done:false}
 ]} />
 
 ## Log
 
 **2026-03-13** - looked up general linear mixed-effects models; understood some R syntax. annotated the code for the 'Reading' script to try and understand each line.
+
+**2026-03-24** - used a fake dataset to understand the result of every function used in the analysis. First they find main effects, and then decompose the interaction effects into smaller parts and find the significance of each. Even though I get the bigger picture here, I'd still like to understand how a lot of these numbers are interpreted and used in scientific papers. 
+
+**2026-03-24** - Converted the other task analysis scripts to qmd for better readability (& usability) - this also helped see what previous people were doing. So, yes, I understand the whole of it from a practical standpoint, but the mixed-effects models and (especially) three-way interaction analyses feels like *really* superficial sort of 'getting it'. So - I'm checking out some explanatory videos and papers related to this.
+
+**2026-03-24** - Found some really excellent, interesting resources - looking forward to going over them tomorrow. 
