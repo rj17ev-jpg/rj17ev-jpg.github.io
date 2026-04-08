@@ -4,13 +4,15 @@ published: 2026-03-29
 last_updated: 2026-03-29
 work_log:
   - 2026-03-29
+  - 2026-04-07
+  - 2026-04-08
 draft: true
 description: 'Analyzing perception data to calculate thresholds'
 tags: [data analysis]
 slug: prog-202-week-4
 coverUrl: https://i.pinimg.com/736x/be/65/5a/be655ab69c51814cfea12d30641a66f1.jpg
 project: true
-status: active
+status: done
 featured: false
 next_step: 'Understand the existing code in the notebook'
 ---
@@ -24,15 +26,18 @@ Here, we're trying to learn how to fit data using nonlinear logistic regression.
 ## Tasks
 
 <TaskList tasks={[
-  { label: "Understand and annotate the existing code", done: false },
-  { label: "Fit everyone's data from the main session as if there were only one single participant", done: false },
-  { label: "Compare the threshold and slope from this fit to the mean threshold and slope of the individual fits", done: false },
-  {label: "Create graphs to visualize this comparison.", done: false},
-  {label:"Comment on the results",done:false},
-  {label:"Fit the logistic function to each participant's data separately for masks above (MASK_POSITION is 1) and below (MASK_POSITION is -1) the target.",done:false},
-  {label:"Compare the resulting thresholds and slopes, both visually and using statistical tests",done:false}
+  { label: "Understand and annotate the existing code", done: true },
+  { label: "Fit everyone's data from the main session as if there were only one single participant", done: true },
+  { label: "Compare the threshold and slope from this fit to the mean threshold and slope of the individual fits", done: true },
+  {label: "Create graphs to visualize this comparison.", done: true},
+  {label:"Comment on the results",done:true},
+  {label:"Fit the logistic function to each participant's data separately for masks above (MASK_POSITION is 1) and below (MASK_POSITION is -1) the target.",done:true},
+  {label:"Compare the resulting thresholds and slopes, both visually and using statistical tests",done:true}
 ]} />
 
 ## Log
 
 **2026-03-29** - Created this project. Downloaded the analysis notebook. 
+**2026-04-07** - This is so confusing. I want to understand and annotate every part of the code the professor has given, first, because otherwise it feels impossible that I'll be able to do this assignment.
+
+**2026-04-08** - The assignment turned out to be really easy once I understood the original code ! Figured out the logistic function, what the parameters mean, and how these relate to perception data. Averaging data across participants is a bad idea because individual patterns are quite different. Also used plotting/statistics to see if a variable was significantly influencing accuracy. 
